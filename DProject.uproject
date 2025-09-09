@@ -7,7 +7,15 @@
 		{
 			"Name": "DProject",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"EnhancedInput",
+				"GameplayAbilities",
+				"AIModule",
+				"UMG",
+				"CoreUObject"
+			]
 		}
 	],
 	"Plugins": [
@@ -17,6 +25,14 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "MotionWarping",
+			"Enabled": true
 		}
 	]
 }
