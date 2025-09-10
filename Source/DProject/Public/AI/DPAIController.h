@@ -9,9 +9,20 @@
 /**
  * 
  */
+
+class UBlackboardComponent;
+class UBehaviorTreeComponent;
+
 UCLASS()
 class DPROJECT_API ADPAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+public:
+	ADPAIController();
+	
+protected:
+
+	UPROPERTY()
+	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
 };

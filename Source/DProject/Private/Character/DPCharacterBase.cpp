@@ -120,21 +120,21 @@ UAnimMontage* ADPCharacterBase::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
-FVector ADPCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
-{
-	const FDPGameplayTags& GameplayTags = FDPGameplayTags::Get();
-	
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
-	{
-		return GetMesh()->GetSocketLocation(LeftHandSocketName);
-	}
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
-	{
-		return GetMesh()->GetSocketLocation(RightHandSocketName);
-	}
-
-	return FVector();
-}
+// FVector ADPCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
+// {
+// 	const FDPGameplayTags& GameplayTags = FDPGameplayTags::Get();
+// 	
+// 	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
+// 	{
+// 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+// 	}
+// 	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
+// 	{
+// 		return GetMesh()->GetSocketLocation(RightHandSocketName);
+// 	}
+//
+// 	return FVector();
+// }
 
 bool ADPCharacterBase::IsDead_Implementation() const
 {

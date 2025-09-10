@@ -37,7 +37,7 @@ public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die(const FVector& DeathImpulse) override;
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
-	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+	//virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatarActor_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
@@ -65,12 +65,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName LeftHandSocketName;
-
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName RightHandSocketName;
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
