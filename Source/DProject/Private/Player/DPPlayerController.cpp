@@ -156,8 +156,7 @@ void ADPPlayerController::BeginPlay()
 	check(DPContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem)
-	
+
 	if (Subsystem)
 	{
 		Subsystem->AddMappingContext(DPContext, 0);
