@@ -55,6 +55,12 @@ public:
 	/* Effects */
 	FGameplayTag Effects_HitReact;
 
+	/* Socket */
+	FGameplayTag CombatSocket_Weapon;
+	FGameplayTag CombatSocket_RightHand;
+	FGameplayTag CombatSocket_LeftHand;
+	FGameplayTag CombatSocket_Muzzle;
+	
 	/* Abilities */
 	FGameplayTag Abilities_None;
 	FGameplayTag Abilities_Attack;
@@ -80,9 +86,7 @@ public:
 	FGameplayTag Damage_Physical;
 	FGameplayTag Damage_Slash;
 
-	FGameplayTag CombatSocket_RightHand;
-	FGameplayTag CombatSocket_LeftHand;
-	FGameplayTag CombatSocket_Muzzle;
+
 	
 	FGameplayTag Debuff_Chance;
 	FGameplayTag Debuff_Damage;

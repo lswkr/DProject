@@ -16,7 +16,7 @@
 class UBehaviorTree;
 class ADPAIController;
 class UWidgetComponent;
-struct FProjectileInfo;
+//struct FProjectileInfo;
 
 UCLASS()
 class DPROJECT_API ADPEnemyCharacter : public ADPCharacterBase, public IHighlightInterface, public IEnemyInterface
@@ -37,7 +37,6 @@ class DPROJECT_API ADPEnemyCharacter : public ADPCharacterBase, public IHighligh
 	/* Combat Interface*/
 	virtual int32 GetPlayerLevel_Implementation() override;
 	virtual void Die(const FVector& DeathImpulse) override;
-	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	/* End Combat Interface*/
 	
 	/* Enemy Interface */
@@ -75,14 +74,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr <USceneComponent> MoveToComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName LeftHandSocketName;
-
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName RightHandSocketName;
-
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName MuzzleSocketName;
+	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level = 1;

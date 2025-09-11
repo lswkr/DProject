@@ -185,28 +185,28 @@ void ADPHeroCharacter::BeginPlay()
 	GetMesh()->HideBoneByName(TEXT("sword_bottom"), EPhysBodyOp::PBO_None);//스워드 및 방패 숨기기
 	GetMesh()->HideBoneByName(TEXT("sword_top"), EPhysBodyOp::PBO_None);//스워드 및 방패 숨기기
 	
-	// BodyCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBodyHit);
-
-	if(HasAuthority())
-	{
-		FActorSpawnParameters ActorSpawnParameters;
-		ActorSpawnParameters.Owner = this;
-		ActorSpawnParameters.Instigator = Cast<APawn>(this);
-		ActorSpawnParameters.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		ActorSpawnParameters.TransformScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot;
-
-		FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
-		
-		// checkf(WeaponClass,TEXT("WeaponClass isn't selected in DPHeroCharacter. Please select WeaponClass."))
-		//
-		// Weapon = GetWorld()->SpawnActor<ADPWeaponBase>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator,ActorSpawnParameters);
-		// Weapon->SetOwner(this);
-		// Weapon->AttachToComponent(GetMesh(), AttachmentTransformRules, WeaponSocketName);
-		//
-		// Weapon->SetReplicates(true);
-		// Weapon->SetReplicateMovement(true);
-	}
-	
+	// // BodyCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBodyHit);
+	//
+	// if(HasAuthority())
+	// {
+	// 	FActorSpawnParameters ActorSpawnParameters;
+	// 	ActorSpawnParameters.Owner = this;
+	// 	ActorSpawnParameters.Instigator = Cast<APawn>(this);
+	// 	ActorSpawnParameters.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	// 	ActorSpawnParameters.TransformScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot;
+	//
+	// 	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
+	// 	
+	// 	// checkf(WeaponClass,TEXT("WeaponClass isn't selected in DPHeroCharacter. Please select WeaponClass."))
+	// 	//
+	// 	// Weapon = GetWorld()->SpawnActor<ADPWeaponBase>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator,ActorSpawnParameters);
+	// 	// Weapon->SetOwner(this);
+	// 	// Weapon->AttachToComponent(GetMesh(), AttachmentTransformRules, WeaponName);
+	// 	//
+	// 	// Weapon->SetReplicates(true);
+	// 	// Weapon->SetReplicateMovement(true);
+	// }
+	//
 
 }
 

@@ -25,7 +25,11 @@ ADPCharacterBase::ADPCharacterBase()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	//GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
-
+	//
+	// Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	// Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
+	// Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 
 }
@@ -42,7 +46,12 @@ void ADPCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 void ADPCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
-	
+
+	// Weapon->SetSimulatePhysics(true);
+	// Weapon->SetEnableGravity(true);
+	// Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	// Weapon->AddImpulse(DeathImpulse * 0.1f, NAME_None, true);
+	//
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -180,12 +189,35 @@ FOnASCRegistered& ADPCharacterBase::GetOnASCRegisteredDelegate()
 
 void ADPCharacterBase::Die(const FVector& DeathImpulse)
 {
+//	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
 	MulticastHandleDeath(DeathImpulse);
 }
 
 FOnDeathSignature& ADPCharacterBase::GetOnDeathDelegate()
 {
 	return OnDeathDelegate;
+}
+
+FVector ADPCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
+{
+	const FDPGameplayTags& GameplayTags = FDPGameplayTags::Get();
+	// if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
+	// {
+	// 	return Weapon->GetSocketLocation(WeaponSocketName);
+	// }
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Muzzle))
+	{
+		return GetMesh()->GetSocketLocation(MuzzleSocketName);
+	}
+	return FVector();
 }
 
 FOnDamageSignature& ADPCharacterBase::GetOnDamageDelegate()

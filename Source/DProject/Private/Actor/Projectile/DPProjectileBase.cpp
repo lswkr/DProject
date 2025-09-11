@@ -3,8 +3,14 @@
 
 #include "Actor/Projectile/DPProjectileBase.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/DPAbilitySystemLibrary.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ADPProjectileBase::ADPProjectileBase()
@@ -36,14 +42,63 @@ void ADPProjectileBase::BeginPlay()
 	SetReplicateMovement(true);
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADPProjectileBase::OnBoxOverlap);
 
-	//LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 	
 }
 
-void ADPProjectileBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ADPProjectileBase::OnHit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Overlapped"), *OtherActor->GetName());
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if (LoopingSoundComponent)
+	{
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
+	bHit = true;
+}
+
+void ADPProjectileBase::Destroyed()
+{
+	Super::Destroyed();
+	if (LoopingSoundComponent)
+	{
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
+	if (!bHit && !HasAuthority()) OnHit();
+	Super::Destroyed();
+}
+
+bool ADPProjectileBase::IsValidOverlap(AActor* OtherActor)
+{
+	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr) return false;
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	if (SourceAvatarActor == OtherActor) return false;
+	if (!UDPAbilitySystemLibrary::IsHostile(SourceAvatarActor, OtherActor)) return false;
+	return true;
+}
+
+void ADPProjectileBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!IsValidOverlap(OtherActor)) return;
+	if (!bHit) OnHit();
+	
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+			DamageEffectParams.DeathImpulse = DeathImpulse;
+			
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			UDPAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+		}
+		
+		Destroy();
+	}
+	else bHit = true;
 }
 
 

@@ -42,7 +42,7 @@ public:
 	virtual void AddToAttributePoints_Implementation(int32 InAttributePoints) override;
 	virtual int32 GetAttributePoints_Implementation() const override;
 	virtual int32 GetSpellPoints_Implementation() const override;
-	// virtual void ToggleWeaponCollision_Implementation(bool bShouldEnable) override;
+//	virtual void ToggleWeaponCollision_Implementation(bool bShouldEnable) override;
 	// virtual void ToggleBodyCollision_Implementation(bool bShouldEnable) override;
 	/* End Player Interface*/
 
@@ -86,17 +86,12 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UBoxComponent> BodyCollisionBox;
 	
-	
-	
 	// UPROPERTY()
 	// TObjectPtr<ADPWeaponBase> Weapon;
 	//
 	// UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	// TSubclassOf<ADPWeaponBase> WeaponClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	FName WeaponSocketName;
-	
+	//
 	virtual void InitAbilityActorInfo() override;
 
 	UFUNCTION(NetMulticast, Reliable)

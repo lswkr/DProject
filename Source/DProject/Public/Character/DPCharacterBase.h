@@ -37,7 +37,7 @@ public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die(const FVector& DeathImpulse) override;
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
-	//virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatarActor_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
@@ -65,7 +65,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
+
+
 	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
 
@@ -77,38 +78,47 @@ protected:
 	 //UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	 //UMotionWarpingComponent* MotionWarpingComponent;
 	
-	 UPROPERTY()
-	 TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName LeftHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName RightHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName MuzzleSocketName;
+
 	
-	 UPROPERTY()
-	 TObjectPtr<UAttributeSet> AttributeSet;
-	
-	 UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	 UNiagaraSystem* HitEffect;
-	
-	 UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	 USoundBase* DeathSound;
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	UNiagaraSystem* HitEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	USoundBase* DeathSound;
 	
 	virtual void InitAbilityActorInfo();
 	
-	 UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
-	 TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 	
-	 UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
-	 TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 	
-	 UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
-	 TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 	
-	
-	 void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
 	virtual void InitializeDefaultAttributes() const;
 	
-	 void AddCharacterAbilities();
+	void AddCharacterAbilities();
 	
-	 UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
-	 ECharacterClass CharacterClass = ECharacterClass::Melee;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Melee;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")

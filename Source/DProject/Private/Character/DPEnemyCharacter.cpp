@@ -85,26 +85,6 @@ void ADPEnemyCharacter::Die(const FVector& DeathImpulse)
 	Super::Die(DeathImpulse);
 }
 
-FVector ADPEnemyCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
-{
-	const FDPGameplayTags& GameplayTags = FDPGameplayTags::Get();
-	
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
-	{
-		return GetMesh()->GetSocketLocation(LeftHandSocketName);
-	}
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
-	{
-		return GetMesh()->GetSocketLocation(RightHandSocketName);
-	}
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Muzzle))
-	{
-		return GetMesh()->GetSocketLocation(MuzzleSocketName);
-	}
-
-	return FVector();
-}
-
 void ADPEnemyCharacter::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
