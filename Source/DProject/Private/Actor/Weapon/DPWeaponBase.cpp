@@ -31,6 +31,11 @@ ADPWeaponBase::ADPWeaponBase()
 	SkeletalMeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 }
 
+UBoxComponent* ADPWeaponBase::GetWeaponBoxComponent()
+{
+	return BoxComponent;
+}
+
 // Called when the game starts or when spawned
 void ADPWeaponBase::BeginPlay()
 {

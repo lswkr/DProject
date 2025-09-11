@@ -14,6 +14,8 @@
 #include "Player/DPPlayerState.h"
 #include "UI/DPHUD.h"
 #include "NiagaraComponent.h"
+#include "Actor/Weapon/DPWeaponBase.h"
+#include "Components/BoxComponent.h"
 
 ADPHeroCharacter::ADPHeroCharacter()
 {
@@ -146,21 +148,21 @@ int32 ADPHeroCharacter::GetPlayerLevel_Implementation()
 	return DPPlayerState->GetPlayerLevel();
 }
 
-// void ADPHeroCharacter::ToggleWeaponCollision_Implementation(bool bShouldEnable)
-// {
-// 	if (!HasAuthority()) return;
-// 	check(Weapon);
-//
-// 	if (bShouldEnable)
-// 	{
-// 		Weapon->GetCollisionBoxComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-// 	}
-// 	else
-// 	{
-// 		Weapon->GetCollisionBoxComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-// 	}
-// 	
-// }
+void ADPHeroCharacter::ToggleWeaponCollision_Implementation(bool bShouldEnable)
+{
+	if (!HasAuthority()) return;
+	check(Weapon);
+
+	if (bShouldEnable)
+	{
+		Weapon->GetWeaponBoxComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	else
+	{
+		Weapon->GetWeaponBoxComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
+}
 
 // void ADPHeroCharacter::ToggleBodyCollision_Implementation(bool bShouldEnable)
 // {
@@ -187,26 +189,26 @@ void ADPHeroCharacter::BeginPlay()
 	
 	// // BodyCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBodyHit);
 	//
-	// if(HasAuthority())
-	// {
-	// 	FActorSpawnParameters ActorSpawnParameters;
-	// 	ActorSpawnParameters.Owner = this;
-	// 	ActorSpawnParameters.Instigator = Cast<APawn>(this);
-	// 	ActorSpawnParameters.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	// 	ActorSpawnParameters.TransformScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot;
-	//
-	// 	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
-	// 	
-	// 	// checkf(WeaponClass,TEXT("WeaponClass isn't selected in DPHeroCharacter. Please select WeaponClass."))
-	// 	//
-	// 	// Weapon = GetWorld()->SpawnActor<ADPWeaponBase>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator,ActorSpawnParameters);
-	// 	// Weapon->SetOwner(this);
-	// 	// Weapon->AttachToComponent(GetMesh(), AttachmentTransformRules, WeaponName);
-	// 	//
-	// 	// Weapon->SetReplicates(true);
-	// 	// Weapon->SetReplicateMovement(true);
-	// }
-	//
+	if(HasAuthority())
+	{
+		FActorSpawnParameters ActorSpawnParameters;
+		ActorSpawnParameters.Owner = this;
+		ActorSpawnParameters.Instigator = Cast<APawn>(this);
+		ActorSpawnParameters.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ActorSpawnParameters.TransformScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot;
+	
+		FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
+		
+		checkf(WeaponClass,TEXT("WeaponClass isn't selected in DPHeroCharacter. Please select WeaponClass."))
+		
+		Weapon = GetWorld()->SpawnActor<ADPWeaponBase>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator,ActorSpawnParameters);
+		Weapon->SetOwner(this);
+		Weapon->AttachToComponent(GetMesh(), AttachmentTransformRules, WeaponSocketName);
+		
+		Weapon->SetReplicates(true);
+		Weapon->SetReplicateMovement(true);
+	}
+	
 
 }
 

@@ -21,6 +21,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
+	UFUNCTION()
+	UBoxComponent* GetWeaponBoxComponent();
 protected:
 	virtual void BeginPlay() override;
 
