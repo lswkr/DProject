@@ -11,6 +11,7 @@
 /**
  * 
  */
+class ULoadScreenSaveGame;
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer&/* AssetTags */);
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
@@ -24,7 +25,6 @@ class DPROJECT_API UDPAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
-	
 public:
 	void AbilityActorInfoSet();
 
@@ -34,7 +34,8 @@ public:
 	FAbilityEquipped AbilityEquipped;
 	FDeactivatePassiveAbility DeactivatePassiveAbility;
 	FActivatePassiveEffect ActivatePassiveEffect;
-	
+
+	void AddCharacterAbilitiesFromSaveData(ULoadScreenSaveGame* SaveData);
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 	bool bStartupAbilitiesGiven = false;
@@ -47,19 +48,19 @@ public:
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-	TArray<FGameplayTag> GetPostAbilitiesFromTag(const FGameplayTag& AbilityTag) const; 
-	TArray<FGameplayTag> GetPreAbilitiesFromTag(const FGameplayTag& AbilityTag) const;
-	FDPAbilityInfo GetInfoFromTag(const FGameplayTag& AbilityTag) const;
-	
 	FGameplayTag GetStatusFromAbilityTag(const FGameplayTag& AbilityTag);
 	FGameplayTag GetSlotFromAbilityTag(const FGameplayTag& AbilityTag);
 	bool SlotIsEmpty(const FGameplayTag& Slot);
 	static bool AbilityHasSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
 	static bool AbilityHasAnySlot(const FGameplayAbilitySpec& Spec);
 	FGameplayAbilitySpec* GetSpecWithSlot(const FGameplayTag& Slot);
-	//bool IsPassiveAbility(const FGameplayAbilitySpec& Spec) const;
 	static void AssignSlotToAbility(FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
 
+	TArray<FGameplayTag> GetPostAbilitiesFromTag(const FGameplayTag& AbilityTag) const; 
+	TArray<FGameplayTag> GetPreAbilitiesFromTag(const FGameplayTag& AbilityTag) const;
+	FDPAbilityInfo GetInfoFromTag(const FGameplayTag& AbilityTag) const;
+	//bool IsPassiveAbility(const FGameplayAbilitySpec& Spec) const;
+	
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 	
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);

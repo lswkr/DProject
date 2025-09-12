@@ -14,8 +14,13 @@
 #include "Player/DPPlayerState.h"
 #include "UI/DPHUD.h"
 #include "NiagaraComponent.h"
+#include "AbilitySystem/DPAbilitySystemLibrary.h"
+#include "AbilitySystem/DPAttributeSet.h"
 #include "Actor/Weapon/DPWeaponBase.h"
 #include "Components/BoxComponent.h"
+#include "Game/DPGameModeBase.h"
+#include "Game/LoadScreenSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
 ADPHeroCharacter::ADPHeroCharacter()
 {
@@ -42,10 +47,16 @@ ADPHeroCharacter::ADPHeroCharacter()
 void ADPHeroCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	InitAbilityActorInfo();
-	InitializeDefaultAttributes();
-	AddCharacterAbilities();
+	LoadProgress();
+
+	if (ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		DPGameMode->LoadWorldState(GetWorld());
+	}
+	// InitializeDefaultAttributes();
+	// AddCharacterAbilities();
 }
 
 void ADPHeroCharacter::OnRep_PlayerState()
@@ -164,6 +175,58 @@ void ADPHeroCharacter::ToggleWeaponCollision_Implementation(bool bShouldEnable)
 	
 }
 
+void ADPHeroCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (DPGameMode)
+	{
+		ULoadScreenSaveGame* SaveData = DPGameMode->RetrieveInGameSaveData();
+		if (SaveData == nullptr) return;
+
+		SaveData->PlayerStartTag = CheckpointTag;
+
+		if (ADPPlayerState* DPPlayerState = Cast<ADPPlayerState>(GetPlayerState()))
+		{
+			SaveData->PlayerLevel = DPPlayerState->GetPlayerLevel();
+			SaveData->XP = DPPlayerState->GetXP();
+			SaveData->AttributePoints = DPPlayerState->GetAttributePoints();
+			SaveData->SkillPoints = DPPlayerState->GetSkillPoints();
+		}
+		SaveData->Strength = UDPAttributeSet::GetStrengthAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Intelligence = UDPAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Luck = UDPAttributeSet::GetLuckAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Will = UDPAttributeSet::GetWillAttribute().GetNumericValue(GetAttributeSet());
+
+		SaveData->bFirstTimeLoadIn = false;
+
+		if (!HasAuthority()) return;
+
+		UDPAbilitySystemComponent* DPASC = Cast<UDPAbilitySystemComponent>(AbilitySystemComponent);
+		FForEachAbility SaveAbilityDelegate;
+		SaveData->SavedAbilities.Empty();
+		SaveAbilityDelegate.BindLambda([this, DPASC, SaveData](const FGameplayAbilitySpec& AbilitySpec)
+		{
+			const FGameplayTag AbilityTag = DPASC->GetAbilityTagFromSpec(AbilitySpec);
+			UAbilityInfo* AbilityInfo = UDPAbilitySystemLibrary::GetAbilityInfo(this);
+			FDPAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+
+			FSavedAbility SavedAbility;
+			SavedAbility.GameplayAbility = Info.Ability;
+			SavedAbility.AbilityLevel = AbilitySpec.Level;
+			SavedAbility.AbilitySlot = DPASC->GetSlotFromAbilityTag(AbilityTag);
+			SavedAbility.AbilityStatus = DPASC->GetStatusFromAbilityTag(AbilityTag);
+			SavedAbility.AbilityTag = AbilityTag;
+			SavedAbility.AbilityType = Info.AbilityType;
+
+			SaveData->SavedAbilities.AddUnique(SavedAbility);
+
+		});
+		DPASC->ForEachAbility(SaveAbilityDelegate);
+		
+		DPGameMode->SaveInGameProgressData(SaveData);
+	}
+}
+
 // void ADPHeroCharacter::ToggleBodyCollision_Implementation(bool bShouldEnable)
 // {
 // 	if (!HasAuthority()) return;
@@ -236,6 +299,39 @@ void ADPHeroCharacter::InitializeDefaultAttributes() const
 {
 	Super::InitializeDefaultAttributes();
 	ApplyEffectToSelf(DefaultRegeneratedAttributes,1);
+}
+
+void ADPHeroCharacter::LoadProgress()
+{
+	ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (DPGameMode)
+	{
+		ULoadScreenSaveGame* SaveData = DPGameMode->RetrieveInGameSaveData();
+		if (SaveData == nullptr) return;
+
+		if (SaveData->bFirstTimeLoadIn)
+		{
+			InitializeDefaultAttributes();
+			AddCharacterAbilities();
+		}
+		else
+		{
+			if (UDPAbilitySystemComponent* DPASC = Cast<UDPAbilitySystemComponent>(AbilitySystemComponent))
+			{
+				DPASC->AddCharacterAbilitiesFromSaveData(SaveData);
+			}
+			
+			if (ADPPlayerState* DPPlayerState = Cast<ADPPlayerState>(GetPlayerState()))
+			{
+				DPPlayerState->SetLevel(SaveData->PlayerLevel);
+				DPPlayerState->SetXP(SaveData->XP);
+				DPPlayerState->SetAttributePoints(SaveData->AttributePoints);
+				DPPlayerState->SetSkillPoints(SaveData->SkillPoints);
+			}
+			
+			UDPAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveData);
+		}
+	}
 }
 
 void ADPHeroCharacter::InitAbilityActorInfo()

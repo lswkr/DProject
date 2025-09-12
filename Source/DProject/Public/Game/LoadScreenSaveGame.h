@@ -121,7 +121,7 @@ public:
 	int32 XP = 0;
 
 	UPROPERTY()
-	int32 SpellPoints = 0;
+	int32 SkillPoints = 0;
 
 	UPROPERTY()
 	int32 AttributePoints = 0;
@@ -133,10 +133,10 @@ public:
 	float Intelligence = 0;
 
 	UPROPERTY()
-	float Resilience = 0;
+	float Luck = 0;
 
 	UPROPERTY()
-	float Vigor = 0;
+	float Will = 0;
 	
 	/* Abilities */
 

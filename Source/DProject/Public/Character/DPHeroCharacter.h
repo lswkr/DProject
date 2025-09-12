@@ -44,6 +44,7 @@ public:
 	virtual int32 GetSpellPoints_Implementation() const override;
 	virtual void ToggleWeaponCollision_Implementation(bool bShouldEnable) override;
 	// virtual void ToggleBodyCollision_Implementation(bool bShouldEnable) override;
+	virtual void SaveProgress_Implementation(const FName& CheckpointTag) override;
 	/* End Player Interface*/
 
 	/* Combat Interface */
@@ -75,7 +76,8 @@ protected:
 	TSubclassOf<UGameplayEffect> DefaultRegeneratedAttributes;
 
 	virtual void InitializeDefaultAttributes() const override;
-	
+
+	void LoadProgress();
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> Camera;
