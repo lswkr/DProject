@@ -228,7 +228,7 @@ void ADPGameModeBase::PlayerDied(ACharacter* DeadCharacter)
 	ULoadScreenSaveGame* SaveGame = RetrieveInGameSaveData();
 	if (!IsValid(SaveGame)) return;
 
-	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->RespawnMapAssetName));
 }
 
 void ADPGameModeBase::BeginPlay()

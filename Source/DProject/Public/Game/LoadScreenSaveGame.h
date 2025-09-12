@@ -104,6 +104,12 @@ public:
 	FString MapAssetName = FString("Default Map Asset Name");
 
 	UPROPERTY()
+	FString RespawnMapName = FString("Default Respawn Map Name");
+
+	UPROPERTY()
+	FString RespawnMapAssetName = FString("Default Respawn Map Asset Name");
+
+	UPROPERTY()
 	FName PlayerStartTag;
 
 	UPROPERTY()

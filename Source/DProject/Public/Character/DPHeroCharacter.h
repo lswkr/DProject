@@ -49,6 +49,8 @@ public:
 
 	/* Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
+	virtual void Die(const FVector& DeathImpulse) override;
+	
 	/* End Combat Interface */
 
 	UPROPERTY(EditDefaultsOnly)

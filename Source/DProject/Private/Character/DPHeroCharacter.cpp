@@ -159,6 +159,23 @@ int32 ADPHeroCharacter::GetPlayerLevel_Implementation()
 	return DPPlayerState->GetPlayerLevel();
 }
 
+void ADPHeroCharacter::Die(const FVector& DeathImpulse)
+{
+	Super::Die(DeathImpulse);
+	FTimerDelegate DeathTimerDelegate;
+	DeathTimerDelegate.BindLambda([this]()
+	{
+		ADPGameModeBase* DPGM = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this));
+		if (DPGM)
+		{
+			DPGM->PlayerDied(this);
+		}
+	});
+	GetWorldTimerManager().SetTimer(DeathTimer, DeathTimerDelegate, DeathTime, false);
+	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	
+}
+
 void ADPHeroCharacter::ToggleWeaponCollision_Implementation(bool bShouldEnable)
 {
 	if (!HasAuthority()) return;

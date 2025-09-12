@@ -13,7 +13,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSlotSelected);
 
 class UMVVM_LoadSlot;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class DPROJECT_API UMVVM_LoadScreen : public UMVVMViewModelBase
 {
 	GENERATED_BODY()

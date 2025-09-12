@@ -59,24 +59,73 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnteredNa
 
 void UMVVM_LoadScreen::NewGameButtonPressed(int32 Slot)
 {
+	LoadSlots[Slot]->SetWidgetSwitcherIndex.Broadcast(1);
 }
 
 void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 {
+	SlotSelected.Broadcast();
+	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
+	{
+		if (LoadSlot.Key == Slot)
+		{
+			LoadSlot.Value->EnableSelectSlotButton.Broadcast(false);
+		}
+		else
+		{
+			LoadSlot.Value->EnableSelectSlotButton.Broadcast(true);
+		}
+	}
+	SelectedSlot = LoadSlots[Slot];
 }
 
 void UMVVM_LoadScreen::DeleteButtonPressed()
 {
+	if (IsValid(SelectedSlot))
+	{
+		ADPGameModeBase::DeleteSlot(SelectedSlot->GetLoadSlotName(), SelectedSlot->SlotIndex);
+		SelectedSlot->SlotStatus = Vacant;
+		SelectedSlot->InitializeSlot();
+		SelectedSlot->EnableSelectSlotButton.Broadcast(true);
+	}
 }
 
 void UMVVM_LoadScreen::PlayButtonPressed()
 {
+	ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this));
+    UDPGameInstance* DPGameInstance = Cast<UDPGameInstance>(DPGameMode->GetGameInstance());
+    DPGameInstance->PlayerStartTag = SelectedSlot->PlayerStartTag;
+    DPGameInstance->LoadSlotName = SelectedSlot->GetLoadSlotName();
+    DPGameInstance->LoadSlotIndex = SelectedSlot->SlotIndex;
+    
+    if (IsValid(SelectedSlot))
+    {
+    	DPGameMode->TravelToMap(SelectedSlot);
+    }
 }
 
 void UMVVM_LoadScreen::LoadData()
 {
+	ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (!IsValid(DPGameMode)) return;
+	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
+	{
+		ULoadScreenSaveGame* SaveObject = DPGameMode->GetSaveSlotData(LoadSlot.Value->GetLoadSlotName(), LoadSlot.Key);
+
+		const FString PlayerName = SaveObject->PlayerName;
+		TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = SaveObject->SaveSlotStatus;
+
+		LoadSlot.Value->SlotStatus = SaveSlotStatus;
+		LoadSlot.Value->SetPlayerName(PlayerName);
+		LoadSlot.Value->InitializeSlot();
+		
+		LoadSlot.Value->SetMapName(SaveObject->MapName);
+		LoadSlot.Value->PlayerStartTag = SaveObject->PlayerStartTag;
+		LoadSlot.Value->SetPlayerLevel(SaveObject->PlayerLevel);
+	}
 }
 
 void UMVVM_LoadScreen::SetNumLoadSlots(int32 InNumLoadSlots)
 {
+	UE_MVVM_SET_PROPERTY_VALUE(NumLoadSlots, InNumLoadSlots);
 }
