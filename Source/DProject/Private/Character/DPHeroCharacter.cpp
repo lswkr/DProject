@@ -52,10 +52,11 @@ void ADPHeroCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	
-	InitAbilityActorInfo();
-	LoadProgress();
 
 	///LoadSave start
+	///
+	// 
+	// LoadProgress();
 	// if (ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this)))
 	// {
 	// 	DPGameMode->LoadWorldState(GetWorld());
@@ -63,6 +64,7 @@ void ADPHeroCharacter::PossessedBy(AController* NewController)
 	///LoadSave end
 
 	//Dev Code
+	InitAbilityActorInfo();
 	InitializeDefaultAttributes();
 	AddCharacterAbilities();
 	//DevCode end
