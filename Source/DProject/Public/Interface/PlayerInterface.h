@@ -25,9 +25,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ToggleWeaponCollision(bool bShouldEnable);
 	
-	// UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	// void ToggleBodyCollision(bool bShouldEnable);
-	//
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ToggleBodyCollision(bool bShouldEnable);
+	
 	UFUNCTION(BlueprintNativeEvent)
 	int32 FindLevelForXP(int32 InXP) const;
 

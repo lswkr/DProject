@@ -42,6 +42,10 @@ ADPHeroCharacter::ADPHeroCharacter()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 
+	BodyCollisionBox = CreateDefaultSubobject<UBoxComponent>("BodyCollisionBox");
+	BodyCollisionBox->SetupAttachment(GetRootComponent());
+	BodyCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void ADPHeroCharacter::PossessedBy(AController* NewController)
@@ -268,21 +272,21 @@ void ADPHeroCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 	}
 }
 
-// void ADPHeroCharacter::ToggleBodyCollision_Implementation(bool bShouldEnable)
-// {
-// 	if (!HasAuthority()) return;
-// 	if (bShouldEnable)
-// 	{
-// 		BodyCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-// 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-// 	}
-// 	else
-// 	{
-// 		BodyCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-// 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-// 	}
-// 	
-// }
+void ADPHeroCharacter::ToggleBodyCollision_Implementation(bool bShouldEnable)
+{
+	if (!HasAuthority()) return;
+	if (bShouldEnable)
+	{
+		BodyCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	else
+	{
+		BodyCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	
+}
 
 void ADPHeroCharacter::BeginPlay()
 {
@@ -291,8 +295,8 @@ void ADPHeroCharacter::BeginPlay()
 	GetMesh()->HideBoneByName(TEXT("sword_bottom"), EPhysBodyOp::PBO_None);//스워드 및 방패 숨기기
 	GetMesh()->HideBoneByName(TEXT("sword_top"), EPhysBodyOp::PBO_None);//스워드 및 방패 숨기기
 	
-	// // BodyCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBodyHit);
-	//
+	BodyCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBodyHit);
+	
 	if(HasAuthority())
 	{
 		FActorSpawnParameters ActorSpawnParameters;
@@ -322,23 +326,35 @@ void ADPHeroCharacter::OnBodyHit(UPrimitiveComponent* OverlappedComponent, AActo
 	
 	UE_LOG(LogTemp, Warning, TEXT("%s detected"), *OtherActor->GetName());
 	
-	FGameplayEventData Data;
-	Data.Instigator = this;
-	Data.Target = OtherActor;
-
-	//적군일 때에만 하도록
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-		this,
-		FDPGameplayTags::Get().Event_HitReact,
-		Data
-	);
-
 	
+
+	if (HasAuthority())
+	{
+		if (OtherActor->Implements<UAbilitySystemInterface>())
+		{
+			FGameplayEventData Data;
+			Data.Instigator = this;
+			Data.Target = OtherActor;
+	
+			if (UDPAbilitySystemLibrary::IsHostile(this, OtherActor))
+			{
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+					this,
+					FDPGameplayTags::Get().Event_HitReact,
+					Data
+				);
+			}
+		}
+	}
 }
+
 
 void ADPHeroCharacter::InitializeDefaultAttributes() const
 {
 	Super::InitializeDefaultAttributes();
+	ApplyEffectToSelf(DefaultPrimaryAttributes,1);
+	ApplyEffectToSelf(DefaultSecondaryAttributes,1);
+	ApplyEffectToSelf(DefaultVitalAttributes,1);
 	ApplyEffectToSelf(DefaultRegeneratedAttributes,1);
 }
 

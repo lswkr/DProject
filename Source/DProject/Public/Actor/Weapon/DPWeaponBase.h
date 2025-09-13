@@ -49,4 +49,55 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	float BaseDamage = 0.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag DamageType = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly)
+	float WeaponLevel = 1.f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float DebuffChance = 0.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DebuffDamage = 0.f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float DebuffDuration = 0.f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float DebuffFrequency = 0.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DeathImpulseMagnitude = 1000.f;
+	
+	/* USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FDamageEffectParams() {}
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UObject> WorldContextObject = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	float DeathImpulseMagnitude = 0.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector DeathImpulse = FVector::ZeroVector;
+
+};*/
+
 };

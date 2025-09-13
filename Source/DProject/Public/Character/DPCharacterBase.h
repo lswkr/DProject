@@ -14,7 +14,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
 class UGameplayAbility;
-//class UMotionWarpingComponent;
+class UMotionWarpingComponent;
 class UAnimMontage;
 
 UCLASS(Abstract)
@@ -74,9 +74,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 600.f;
-
-	 //UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	 //UMotionWarpingComponent* MotionWarpingComponent;
+	 
+	 UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	 UMotionWarpingComponent* MotionWarpingComponent;
 	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName LeftHandSocketName;

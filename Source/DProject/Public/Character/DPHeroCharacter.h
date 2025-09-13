@@ -43,7 +43,7 @@ public:
 	virtual int32 GetAttributePoints_Implementation() const override;
 	virtual int32 GetSpellPoints_Implementation() const override;
 	virtual void ToggleWeaponCollision_Implementation(bool bShouldEnable) override;
-	// virtual void ToggleBodyCollision_Implementation(bool bShouldEnable) override;
+	virtual void ToggleBodyCollision_Implementation(bool bShouldEnable) override;
 	virtual void ShowTargetingCircle_Implementation(UMaterialInterface* DecalMaterial) override;
 	virtual void HideTargetingCircle_Implementation() override;
 	virtual void SaveProgress_Implementation(const FName& CheckpointTag) override;

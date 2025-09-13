@@ -8,7 +8,7 @@
 #include "DPGameplayTags.h"
 #include "AbilitySystem/DPAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
-//#include "MotionWarpingComponent.h"
+#include "MotionWarpingComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -31,7 +31,8 @@ ADPCharacterBase::ADPCharacterBase()
 	// Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
-
+	
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 }
 
 void ADPCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

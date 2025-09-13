@@ -4,7 +4,9 @@
 #include "Actor/Weapon/DPWeaponBase.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "DPGameplayTags.h"
+#include "SourceControlAssetDataCache.h"
 #include "AbilitySystem/DPAbilitySystemLibrary.h"
 #include "Character/DPCharacterBase.h"
 #include "Components/BoxComponent.h"
@@ -51,29 +53,54 @@ void ADPWeaponBase::OnBoxComponentOverlap(UPrimitiveComponent* OverlappedCompone
 	
 	UE_LOG(LogTemp, Warning, TEXT("%s detected"), *OtherActor->GetName());
 	// if (!IsValidOverlap(OtherActor)) return;
-	//
-	// FGameplayEventData Data;
-	// Data.Instigator = this;
-	// Data.Target = OtherActor;
-	//
-	//
-	// if (HasAuthority())
-	// {
-	// 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-	// 	this,
-	// 	FDPGameplayTags::Get().Event_HitReact,
-	// 	Data
-	// 	);
-	//
-	// 	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-	// 	{
-	// 		const FVector DeathImpulse = GetOwner()->GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
-	// 		DamageEffectParams.DeathImpulse = DeathImpulse;
-	// 		DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-	// 		UE_LOG(LogTemp, Warning, TEXT("OtherActor Success: %s (ADPWeaponBase::line 47)"), *OtherActor->GetName());	
-	// 		UDPAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
-	// 	}
-	// }
+	
+	
+	
+	if (HasAuthority())
+	{
+		
+		// if (OtherActor->Implements<UAbilitySystemInterface>())
+		// {
+		// 	FGameplayEventData Data;
+		// 	Data.Instigator = this;
+		// 	Data.Target = OtherActor;
+		//
+		// 	if (UDPAbilitySystemLibrary::IsHostile(this, OtherActor))
+		// 	{
+		// 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		// 			this,
+		// 			FDPGameplayTags::Get().Event_HitReact,
+		// 			Data
+		// 		);
+		// 	}
+		// }
+		if (UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()))
+		{
+			if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+			{
+				if (UDPAbilitySystemLibrary::IsHostile(GetOwner(), OtherActor))
+				{
+					const FVector DeathImpulse = GetOwner()->GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+					DamageEffectParams.WorldContextObject = this;
+					DamageEffectParams.DamageGameplayEffectClass = DamageGameplayEffectClass;
+					DamageEffectParams.SourceAbilitySystemComponent = SourceASC;
+					DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+					DamageEffectParams.BaseDamage = BaseDamage;
+					DamageEffectParams.AbilityLevel = WeaponLevel;
+					DamageEffectParams.DamageType = DamageType;
+					DamageEffectParams.DebuffChance = DebuffChance;
+					DamageEffectParams.DebuffDuration = DebuffDuration;
+					DamageEffectParams.DebuffFrequency = DebuffFrequency;
+					DamageEffectParams.DebuffDamage = DebuffDamage;
+					DamageEffectParams.DeathImpulseMagnitude = DeathImpulseMagnitude;
+					DamageEffectParams.DeathImpulse = (OtherActor->GetActorLocation()-this->GetActorLocation());
+					UE_LOG(LogTemp, Warning, TEXT("OtherActor Success: %s (ADPWeaponBase::line 47)"), *OtherActor->GetName());	
+					UDPAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+				}
+			}
+		}
+		
+	}
 }
 
 bool ADPWeaponBase::IsValidOverlap(AActor* OverlappedActor)
