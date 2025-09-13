@@ -10,6 +10,15 @@
 class UBoxComponent;
 class UProjectileMovementComponent;
 class UNiagaraSystem;
+
+UENUM(BlueprintType)
+enum class EProjectileType : uint8
+{
+	EOnHit,
+	EOnOverlap
+};
+
+
 UCLASS()
 class DPROJECT_API ADPProjectileBase : public AActor
 {
@@ -28,7 +37,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-
+	UPROPERTY(EditDefaultsOnly)
+	EProjectileType ProjectileType = EProjectileType::EOnHit;
+	
 	UFUNCTION(BlueprintCallable)
 	virtual void OnHit();
 	virtual void Destroyed() override;
@@ -44,6 +55,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
+
 	
 private:
 	UPROPERTY(EditDefaultsOnly)

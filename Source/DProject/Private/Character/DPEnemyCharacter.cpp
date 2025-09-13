@@ -7,7 +7,7 @@
 #include "AbilitySystem/DPAbilitySystemComponent.h"
 #include "AbilitySystem/DPAbilitySystemLibrary.h"
 #include "AbilitySystem/DPAttributeSet.h"
-//#include "Actor/Projectile/DPProjectileBase.h"
+#include "Actor/Projectile/DPProjectileBase.h"
 #include "AI/DPAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -104,21 +104,12 @@ AActor* ADPEnemyCharacter::GetCombatTarget_Implementation()
 {
 	return CombatTarget;
 }
-//
-// FProjectileInfo ADPEnemyCharacter::GetProjectileInfo_Implementation() const
-// {
-// 	if (CharacterClass == ECharacterClass::Range || CharacterClass == ECharacterClass::Complex)
-// 	{
-// 		return ProjectileInfo;	
-// 	}
-// 	return FProjectileInfo();
-// }
 
-//
-// float ADPEnemyCharacter::GetFireDistance_Implementation() const
-// {
-// 	return FireDistance;
-// }
+FProjectileInfo ADPEnemyCharacter::GetProjectileClassInfo_Implementation() const
+{
+	return ProjectileInfo;
+}
+
 
 void ADPEnemyCharacter::BeginPlay()
 {

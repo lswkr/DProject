@@ -7,15 +7,16 @@
 #include "AbilitySystemComponent.h"
 #include "Actor/Projectile/DPProjectileBase.h"
 #include "Interface/CombatInterface.h"
+#include "Interface/EnemyInterface.h"
 
 void UDPProjectileSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+                                         const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+                                         const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UDPProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag,
+void UDPProjectileSkill::SpawnProjectile_Enemy(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag,
 	bool bOverridePitch, float PitchOverride)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
@@ -25,23 +26,25 @@ void UDPProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation
 		GetAvatarActorFromActorInfo(),
 		SocketTag);
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-	if (bOverridePitch)
-	{
-		Rotation.Pitch = PitchOverride;
-	}
-	
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SocketLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
+
+	if (GetAvatarActorFromActorInfo()->Implements<UEnemyInterface>())
+	{
 		
-	ADPProjectileBase* Projectile = GetWorld()->SpawnActorDeferred<ADPProjectileBase>(
-		ProjectileClass,
+		FProjectileInfo ProjectileInfo = IEnemyInterface::Execute_GetProjectileClassInfo(GetAvatarActorFromActorInfo());
+		UE_LOG(LogTemp, Warning, TEXT("%s exist"), *ProjectileInfo.ProjectileClass->GetName());
+		ADPProjectileBase* Projectile = GetWorld()->SpawnActorDeferred<ADPProjectileBase>(
+		ProjectileInfo.ProjectileClass,
 		SpawnTransform,
 		GetOwningActorFromActorInfo(),
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	
-	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
-		
-	Projectile->FinishSpawning(SpawnTransform);
+		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+		Projectile->DamageEffectParams.BaseDamage = ProjectileInfo.Damage;
+		Projectile->FinishSpawning(SpawnTransform);
+	}
+	
 }

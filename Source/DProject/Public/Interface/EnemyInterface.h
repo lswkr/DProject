@@ -7,6 +7,21 @@
 #include "Actor/Projectile/DPProjectileBase.h"
 #include "EnemyInterface.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct FProjectileInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ADPProjectileBase> ProjectileClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Damage;
+	
+}
+;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType)
 class UEnemyInterface : public UInterface
@@ -30,12 +45,8 @@ public:
 	AActor* GetCombatTarget();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TSubclassOf<ADPProjectileBase> GetProjectileClass();
+	FProjectileInfo GetProjectileClassInfo() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	float GetFireDistance() const;
 
-	// UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	// FProjectileInfo GetProjectileInfo() const;
 	
 };

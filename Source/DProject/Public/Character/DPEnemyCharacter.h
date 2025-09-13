@@ -16,7 +16,6 @@
 class UBehaviorTree;
 class ADPAIController;
 class UWidgetComponent;
-//struct FProjectileInfo;
 
 UCLASS()
 class DPROJECT_API ADPEnemyCharacter : public ADPCharacterBase, public IHighlightInterface, public IEnemyInterface
@@ -42,8 +41,8 @@ class DPROJECT_API ADPEnemyCharacter : public ADPCharacterBase, public IHighligh
 	/* Enemy Interface */
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
 	virtual AActor* GetCombatTarget_Implementation() override;
-//	virtual FProjectileInfo GetProjectileInfo_Implementation() const override;
-//	virtual float GetFireDistance_Implementation() const override;
+	virtual FProjectileInfo GetProjectileClassInfo_Implementation() const override;
+
 	/* End Enemy Interface */
 
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
@@ -85,14 +84,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<ADPAIController> DPAIController;
-
+	
 	// UPROPERTY(EditAnywhere)
 	// float FireDistance = 500.f;
 
-	// UPROPERTY(EditAnywhere, Category = "Projectile")
-	// FProjectileInfo ProjectileInfo;
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	FProjectileInfo ProjectileInfo;
 	//
 	// UFUNCTION(BlueprintImplementableEvent)
 	// void SpawnLoot();

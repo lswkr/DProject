@@ -50,23 +50,31 @@ void ADPProjectileBase::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	if (LoopingSoundComponent)
+	if (ProjectileType == EProjectileType::EOnHit)
 	{
-		LoopingSoundComponent->Stop();
-		LoopingSoundComponent->DestroyComponent();
+		if (LoopingSoundComponent)
+		{
+			LoopingSoundComponent->Stop();
+			LoopingSoundComponent->DestroyComponent();
+		}
 	}
 	bHit = true;
 }
 
 void ADPProjectileBase::Destroyed()
 {
-	Super::Destroyed();
 	if (LoopingSoundComponent)
 	{
 		LoopingSoundComponent->Stop();
 		LoopingSoundComponent->DestroyComponent();
 	}
-	if (!bHit && !HasAuthority()) OnHit();
+	if (!bHit && !HasAuthority())
+	{
+		if (ProjectileType == EProjectileType::EOnHit)
+		{
+			OnHit();
+		}
+	}
 	Super::Destroyed();
 }
 
@@ -83,22 +91,37 @@ void ADPProjectileBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, A
                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!IsValidOverlap(OtherActor)) return;
-	if (!bHit) OnHit();
+
 	
-	if (HasAuthority())
+	if (ProjectileType == EProjectileType::EOnOverlap)
+	{
+		OnHit();
+	}
+	else if (!bHit) OnHit();
+
+	if (HasAuthority()) 
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 			DamageEffectParams.DeathImpulse = DeathImpulse;
-			
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UDPAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
+
+		if (ProjectileType == EProjectileType::EOnHit)
+		{
+			Destroy();
+		}
 		
-		Destroy();
 	}
-	else bHit = true;
+	else
+	{
+		if (ProjectileType == EProjectileType::EOnHit)
+		{
+			bHit = true;
+		}
+	}
 }
 
 

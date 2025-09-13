@@ -12,6 +12,7 @@
 class ADPProjectileBase;
 class UGameplayEffect;
 struct FGameplayTag;
+struct FProjectileInfo;
 
 UCLASS()
 class DPROJECT_API UDPProjectileSkill : public UDPDamageGameplayAbility
@@ -23,7 +24,7 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
+	void SpawnProjectile_Enemy(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<ADPProjectileBase> ProjectileClass;
