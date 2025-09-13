@@ -68,6 +68,11 @@ void FDPGameplayTags::InitializeNativeGameplayTags()
 		FName("Event.HitReact"),
 		FString("Send event to self if Hits enemy")
 		);
+
+	GameplayTags.Event_Montage_PointsExplosion = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Event.Montage.PointsExplosion"),
+		FString("Montage of PointsExplosion")
+		);
 	
 	/* Primary Attributes */
 	GameplayTags.Attributes_Primary_Strength = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -171,6 +176,11 @@ void FDPGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Attack.Dash"),
 		FString("Dash Attack")
 		);
+	
+	GameplayTags.Abilities_Attack_PointsExplosion = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Abilities.Attack.PointsExplosion"),
+	FString("Points Explosion")
+	);
 
 	GameplayTags.Abilities_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.HitReact"),

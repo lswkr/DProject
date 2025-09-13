@@ -51,12 +51,18 @@ void ADPHeroCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 	LoadProgress();
 
-	if (ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this)))
-	{
-		DPGameMode->LoadWorldState(GetWorld());
-	}
-	// InitializeDefaultAttributes();
-	// AddCharacterAbilities();
+	///LoadSave start
+	// if (ADPGameModeBase* DPGameMode = Cast<ADPGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	// {
+	// 	DPGameMode->LoadWorldState(GetWorld());
+	// }
+	///LoadSave end
+
+	//Dev Code
+	InitializeDefaultAttributes();
+	AddCharacterAbilities();
+	//DevCode end
+	
 }
 
 void ADPHeroCharacter::OnRep_PlayerState()
@@ -190,6 +196,24 @@ void ADPHeroCharacter::ToggleWeaponCollision_Implementation(bool bShouldEnable)
 		Weapon->GetWeaponBoxComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	
+}
+
+void ADPHeroCharacter::ShowTargetingCircle_Implementation(UMaterialInterface* DecalMaterial)
+{
+	if (ADPPlayerController* DPPlayerController = Cast<ADPPlayerController>(GetController()))
+	{
+		DPPlayerController->ShowTargetingCircle(DecalMaterial);
+		DPPlayerController->bShowMouseCursor = false;
+	}
+}
+
+void ADPHeroCharacter::HideTargetingCircle_Implementation()
+{
+	if (ADPPlayerController* DPPlayerController = Cast<ADPPlayerController>(GetController()))
+	{
+		DPPlayerController->HideTargetingCircle();
+		DPPlayerController->bShowMouseCursor = true;
+	}
 }
 
 void ADPHeroCharacter::SaveProgress_Implementation(const FName& CheckpointTag)

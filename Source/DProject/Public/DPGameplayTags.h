@@ -28,6 +28,7 @@ public:
 
 	/* Event Tags */
 	FGameplayTag Event_HitReact;
+	FGameplayTag Event_Montage_PointsExplosion;
 	
 	/* Primary Attributes */
 	FGameplayTag Attributes_Primary_Strength;
@@ -68,7 +69,8 @@ public:
 	
 	FGameplayTag Abilities_Attack_DefaultAttack;
 	FGameplayTag Abilities_Attack_Dash;
-
+	FGameplayTag Abilities_Attack_PointsExplosion;
+	
 	FGameplayTag Abilities_Passive_ListenForEvent;
 	
 	FGameplayTag Debuff_Bleeding;

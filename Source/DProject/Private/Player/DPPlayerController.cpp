@@ -13,7 +13,8 @@
 #include "Input/DPInputComponent.h"
 #include "Interface/HighlightInterface.h"
 #include "NiagaraFunctionLibrary.h"
-
+#include "Actor/TargetingCircle.h"
+#include "Components/DecalComponent.h"
 
 
 ADPPlayerController::ADPPlayerController()
@@ -29,7 +30,28 @@ void ADPPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
 	AutoRun();
+	UpdateTargetingCircleLocation();
 	
+}
+
+void ADPPlayerController::ShowTargetingCircle(UMaterialInterface* DecalMaterial)
+{
+	if (!IsValid(TargetingCircle))
+	{
+		TargetingCircle = GetWorld()->SpawnActor<ATargetingCircle>(TargetingCircleClass);
+		if (DecalMaterial)
+		{
+			TargetingCircle->TargetingCircleDecal->SetMaterial(0, DecalMaterial);
+		}
+	}
+}
+
+void ADPPlayerController::HideTargetingCircle()
+{
+	if (IsValid(TargetingCircle))
+	{
+		TargetingCircle->Destroy();
+	}
 }
 
 void ADPPlayerController::CursorTrace()
@@ -147,6 +169,14 @@ void ADPPlayerController::AutoRun()
 		{
 			bAutoRunning = false;
 		}
+	}
+}
+
+void ADPPlayerController::UpdateTargetingCircleLocation()
+{
+	if (IsValid(TargetingCircle))
+	{
+		TargetingCircle->SetActorLocation(CursorHit.ImpactPoint);
 	}
 }
 

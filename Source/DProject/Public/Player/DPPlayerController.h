@@ -19,6 +19,7 @@ class UDPInputConfig;
 class IHighlightInterface;
 class UNiagaraSystem;
 class UDPAbilitySystemComponent;
+class ATargetingCircle;
 
 struct FInputActionValue;
 
@@ -42,11 +43,11 @@ public:
 	// UFUNCTION(Client, Reliable)
 	// void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 
-	// UFUNCTION(BlueprintCallable)
-	// void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
-	//
-	// UFUNCTION(BlueprintCallable)
-	// void HideMagicCircle();
+	UFUNCTION(BlueprintCallable)
+	void ShowTargetingCircle(UMaterialInterface* DecalMaterial = nullptr);
+	
+	UFUNCTION(BlueprintCallable)
+	void HideTargetingCircle();
 
 	
 protected:
@@ -110,11 +111,11 @@ private:
 	// UPROPERTY(EditDefaultsOnly)
 	// TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
-	// UPROPERTY(EditDefaultsOnly)
-	// TSubclassOf<AMagicCircle> MagicCircleClass;
-	//
-	// UPROPERTY()
-	// TObjectPtr<AMagicCircle> MagicCircle;
+	 UPROPERTY(EditDefaultsOnly)
+	 TSubclassOf<ATargetingCircle> TargetingCircleClass;
+	
+	 UPROPERTY()
+	 TObjectPtr<ATargetingCircle> TargetingCircle;
 
-//	void UpdateMagicCircleLocation();
+	void UpdateTargetingCircleLocation();
 };

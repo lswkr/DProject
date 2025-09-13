@@ -24,12 +24,8 @@ FString UDPDamageGameplayAbility::GetDescription(int32 Level)
 			//Description
 			"<Default>Launches a bolt of fire,"
 			" exploding on impact and dealing: </>"
-			//Damage
-			"<Damage>%d</><Default> fire damage with"
-			" a chance to burn</>"
 			),
-			//Values
-			Level);//""안에 "로 나눠도 상관없다.	
+			Level);
 	
 }
 
@@ -41,7 +37,7 @@ void UDPDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
-FDamageEffectParams UDPDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor,
+FDamageEffectParams UDPDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor,FVector InRadialDamageOrigin,
 	bool bOverrideDeathImpulse, FVector DeathImpulseDirectionOverride, bool bOverridePitch, float PitchOverride) const
 {
 	FDamageEffectParams Params;
@@ -85,6 +81,14 @@ FDamageEffectParams UDPDamageGameplayAbility::MakeDamageEffectParamsFromClassDef
 			DeathImpulseRotation.Pitch = PitchOverride;
 			Params.DeathImpulse = DeathImpulseRotation.Vector() * DeathImpulseMagnitude;
 		}
+	}
+	
+	if (bIsRadialDamage)
+	{
+		Params.bIsRadialDamage = bIsRadialDamage;
+		Params.RadialDamageOrigin = InRadialDamageOrigin;
+		Params.RadialDamageInnerRadius = RadialDamageInnerRadius;
+		Params.RadialDamageOuterRadius = RadialDamageOuterRadius;
 	}
 	return Params;
 }

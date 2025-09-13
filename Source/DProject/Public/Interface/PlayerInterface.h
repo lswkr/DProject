@@ -7,7 +7,7 @@
 #include "PlayerInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType)
 class UPlayerInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -60,7 +60,13 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowTargetingCircle(UMaterialInterface* DecalMaterial = nullptr);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HideTargetingCircle();
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SaveProgress(const FName& CheckpointTag);
 };
