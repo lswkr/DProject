@@ -16,6 +16,7 @@
 #include "NiagaraComponent.h"
 #include "AbilitySystem/DPAbilitySystemLibrary.h"
 #include "AbilitySystem/DPAttributeSet.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Actor/Weapon/DPWeaponBase.h"
 #include "Components/BoxComponent.h"
 #include "Game/DPGameModeBase.h"
@@ -288,6 +289,42 @@ void ADPHeroCharacter::ToggleBodyCollision_Implementation(bool bShouldEnable)
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 	
+}
+
+void ADPHeroCharacter::OnRep_Stunned()
+{
+	if (UDPAbilitySystemComponent* DPASC = Cast<UDPAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		const FDPGameplayTags GameplayTags = FDPGameplayTags::Get();
+		FGameplayTagContainer BlockedTags;
+		BlockedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+		
+		if (bIsStunned) 
+		{
+			DPASC->AddLooseGameplayTags(BlockedTags);
+			StunDebuffComponent->Activate();
+		}
+		else
+		{
+			DPASC->RemoveLooseGameplayTags(BlockedTags);
+			StunDebuffComponent->Activate();
+		}	
+	}
+}
+
+void ADPHeroCharacter::OnRep_Bleeding()
+{
+	if (bIsBleeding)
+	{
+		BleedingDebuffComponent->Activate();
+	}
+	else
+	{
+		BleedingDebuffComponent->Deactivate();
+	}
 }
 
 void ADPHeroCharacter::BeginPlay()

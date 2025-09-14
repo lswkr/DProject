@@ -186,12 +186,13 @@ void UDPAttributeSet::Debuff(const FEffectProperties& Props)
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
 	const FGameplayTag DebuffTag = GameplayTags.DamageTypesToDebuffs[DamageType];
+	UE_LOG(LogTemp, Warning, TEXT("Debuff: %s"), *DebuffTag.ToString());
 
 	FInheritedTagContainer InheritedTagContainer = FInheritedTagContainer();
 	UTargetTagsGameplayEffectComponent& AssetTagsComponent = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
 	InheritedTagContainer.Added.AddTag(DebuffTag);//여기가 GameplayEffect 블루프린트에서 설정하던 그 태그 덩어리다.
 	InheritedTagContainer.CombinedTags.AddTag(DebuffTag);
-//	AssetTagsComponent.SetAndApplyTargetTagChanges(InheritedTagContainer);
+	AssetTagsComponent.SetAndApplyTargetTagChanges(InheritedTagContainer);
 	if (DebuffTag.MatchesTagExact(GameplayTags.Debuff_Stun))
 	{
 		InheritedTagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
@@ -344,7 +345,7 @@ void UDPAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			if (Props.TargetCharacter->Implements<UCombatInterface>())
 			{
 				FGameplayTagContainer TagContainer;
-
+				UE_LOG(LogTemp,Warning, TEXT("%s HitReacting"),*Props.TargetCharacter->GetName());
 				TagContainer.AddTag(FDPGameplayTags::Get().Effects_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
@@ -356,8 +357,10 @@ void UDPAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 
 		if (UDPAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
 		{
+			UE_LOG(LogTemp,Warning, TEXT("IsSuccessfulDebuff = true"));
 			Debuff(Props);
 		}
+		UE_LOG(LogTemp,Warning, TEXT("IsSuccessfulDebuff Done"));
 		
 	}
 	

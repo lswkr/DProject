@@ -9,6 +9,7 @@
 #include "AbilitySystem/DPAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "MotionWarpingComponent.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -19,6 +20,14 @@ ADPCharacterBase::ADPCharacterBase()
 
 	PrimaryActorTick.bCanEverTick = true;
 
+	StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffComponent"));
+	StunDebuffComponent->SetupAttachment(GetRootComponent());
+	StunDebuffComponent->DebuffTag = FDPGameplayTags::Get().Debuff_Stun;
+
+	BleedingDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BleedingDebuffComponent"));
+	BleedingDebuffComponent->SetupAttachment(GetRootComponent());
+	BleedingDebuffComponent->DebuffTag = FDPGameplayTags::Get().Debuff_Bleeding;
+	
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 
@@ -40,7 +49,7 @@ void ADPCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ADPCharacterBase, bIsStunned);
-
+	DOREPLIFETIME(ADPCharacterBase, bIsBleeding);
 }
 
 
@@ -61,10 +70,16 @@ void ADPCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathI
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	bDead = true;
+	StunDebuffComponent->Deactivate();
+	BleedingDebuffComponent->Deactivate();
 	OnDeathDelegate.Broadcast(this);
 }
 
 void ADPCharacterBase::OnRep_Stunned()
+{
+}
+
+void ADPCharacterBase::OnRep_Bleeding()
 {
 }
 

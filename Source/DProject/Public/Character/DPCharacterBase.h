@@ -16,6 +16,7 @@ class UGameplayEffect;
 class UGameplayAbility;
 class UMotionWarpingComponent;
 class UAnimMontage;
+class UDebuffNiagaraComponent;
 
 UCLASS(Abstract)
 class DPROJECT_API ADPCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -60,6 +61,12 @@ public:
 
 	UFUNCTION()
 	virtual void OnRep_Stunned();
+
+	UPROPERTY(ReplicatedUsing = OnRep_Bleeding, BlueprintReadOnly)
+	bool bIsBleeding = false;
+
+	UFUNCTION()
+	virtual void OnRep_Bleeding();
 
 	void SetCharacterClass(ECharacterClass InClass) {CharacterClass = InClass;}
 
@@ -120,6 +127,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Melee;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BleedingDebuffComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;

@@ -15,7 +15,8 @@
 				"AIModule",
 				"UMG",
 				"CoreUObject",
-				"ModelViewViewModel"
+				"ModelViewViewModel",
+				"Niagara"
 			]
 		}
 	],

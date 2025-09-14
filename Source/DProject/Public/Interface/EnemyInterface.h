@@ -14,10 +14,10 @@ struct FProjectileInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<ADPProjectileBase> ProjectileClass;
+	TSubclassOf<ADPProjectileBase> ProjectileClass = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Damage;
+	float Damage = 0;
 	
 }
 ;

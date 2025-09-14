@@ -59,7 +59,7 @@ protected:
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
-	float LifeSpan = 5.f;
+	float LifeSpan;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect;

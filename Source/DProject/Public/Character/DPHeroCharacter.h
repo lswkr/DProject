@@ -61,7 +61,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
-	
+
+	virtual void OnRep_Stunned() override;
+	virtual void OnRep_Bleeding() override;
 	// UFUNCTION(BlueprintCallable)
 	// ADPWeaponBase* GetWeapon() const {return Weapon;}
 	//

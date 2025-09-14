@@ -16,8 +16,7 @@ void UDPProjectileSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UDPProjectileSkill::SpawnProjectile_Enemy(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag,
-	bool bOverridePitch, float PitchOverride)
+void UDPProjectileSkill::SpawnProjectile_Enemy(const FGameplayTag& SocketTag)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -25,14 +24,15 @@ void UDPProjectileSkill::SpawnProjectile_Enemy(const FVector& ProjectileTargetLo
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
 		GetAvatarActorFromActorInfo(),
 		SocketTag);
-	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	const FVector Forward = (GetAvatarActorFromActorInfo()->GetActorForwardVector());
+	FRotator Rotation = Forward.Rotation();
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SocketLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
 
+	
 	if (GetAvatarActorFromActorInfo()->Implements<UEnemyInterface>())
 	{
-		
 		FProjectileInfo ProjectileInfo = IEnemyInterface::Execute_GetProjectileClassInfo(GetAvatarActorFromActorInfo());
 		UE_LOG(LogTemp, Warning, TEXT("%s exist"), *ProjectileInfo.ProjectileClass->GetName());
 		ADPProjectileBase* Projectile = GetWorld()->SpawnActorDeferred<ADPProjectileBase>(

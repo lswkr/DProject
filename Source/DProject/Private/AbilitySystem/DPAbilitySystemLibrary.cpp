@@ -346,6 +346,43 @@ FVector UDPAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextHan
 	return FVector::ZeroVector;
 }
 
+bool UDPAbilitySystemLibrary::IsRadialDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FDPGameplayEffectContext* DPEffectContext = static_cast<const FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return DPEffectContext->IsRadialDamage();
+	}
+	return false;
+}
+
+
+float UDPAbilitySystemLibrary::GetRadialDamageInnerRadius(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FDPGameplayEffectContext* DPEffectContext = static_cast<const FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return DPEffectContext->GetRadialDamageInnerRadius();
+	}
+	return 0.f;
+}
+
+float UDPAbilitySystemLibrary::GetRadialDamageOuterRadius(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FDPGameplayEffectContext* DPEffectContext = static_cast<const FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return DPEffectContext->GetRadialDamageOuterRadius();
+	}
+	return 0.f;
+}
+
+FVector UDPAbilitySystemLibrary::GetRadialDamageOrigin(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FDPGameplayEffectContext* DPEffectContext = static_cast<const FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return DPEffectContext->GetRadialDamageOrigin();
+	}
+	return FVector::ZeroVector;
+}
+
 void UDPAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit)
 {
 	if (FDPGameplayEffectContext* DPEffectContext = static_cast<FDPGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -367,7 +404,7 @@ void UDPAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHandle
 {
 	if (FDPGameplayEffectContext* DPEffectContext = static_cast<FDPGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		DPEffectContext->SetIsCriticalHit(bInSuccessfulDebuff);
+		DPEffectContext->SetIsSuccessfulDebuff(bInSuccessfulDebuff);
 	}
 }
 
@@ -414,4 +451,69 @@ void UDPAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& Effe
 	{
 		DPEffectContext->SetDeathImpulse(InImpulse);
 	}
+}
+
+void UDPAbilitySystemLibrary::SetIsRadialDamage(FGameplayEffectContextHandle& EffectContextHandle,
+	bool bInIsRadialDamage)
+{
+	if (FDPGameplayEffectContext* AuraEffectContext = static_cast<FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetIsRadialDamage(bInIsRadialDamage);
+	}
+}
+
+void UDPAbilitySystemLibrary::SetRadialDamageInnerRadius(FGameplayEffectContextHandle& EffectContextHandle,
+	float InInnerRadius)
+{
+	if (FDPGameplayEffectContext* AuraEffectContext = static_cast<FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetRadialDamageInnerRadius(InInnerRadius);
+	}
+}
+
+void UDPAbilitySystemLibrary::SetRadialDamageOuterRadius(FGameplayEffectContextHandle& EffectContextHandle,
+	float InOuterRadius)
+{
+	if (FDPGameplayEffectContext* AuraEffectContext = static_cast<FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetRadialDamageOuterRadius(InOuterRadius);
+	}
+}
+
+void UDPAbilitySystemLibrary::SetRadialDamageOrigin(FGameplayEffectContextHandle& EffectContextHandle,
+	const FVector& InOrigin)
+{
+	if (FDPGameplayEffectContext* DPEffectContext = static_cast<FDPGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		DPEffectContext->SetRadialDamageOrigin(InOrigin);
+	}
+}
+
+void UDPAbilitySystemLibrary::SetIsRadialDamageEffectParam(FDamageEffectParams& DamageEffectParams, bool bIsRadial,
+	float InnerRadius, float OuterRadius, FVector Origin)
+{
+	DamageEffectParams.bIsRadialDamage = bIsRadial;
+	DamageEffectParams.RadialDamageInnerRadius = InnerRadius;
+	DamageEffectParams.RadialDamageOuterRadius = OuterRadius;
+	DamageEffectParams.RadialDamageOrigin = Origin;
+}
+
+void UDPAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& DamageEffectParams,
+	FVector ImpulseDirection, float Magnitude)
+{
+	ImpulseDirection.Normalize();
+	if (Magnitude == 0.f)
+	{
+		DamageEffectParams.DeathImpulse = ImpulseDirection * DamageEffectParams.DeathImpulseMagnitude;
+	}
+	else
+	{
+		DamageEffectParams.DeathImpulse = ImpulseDirection * Magnitude;
+	}
+}
+
+void UDPAbilitySystemLibrary::SetTargetEffectParamsASC(FDamageEffectParams& DamageEffectParams,
+	UAbilitySystemComponent* InASC)
+{
+	DamageEffectParams.TargetAbilitySystemComponent = InASC;
 }

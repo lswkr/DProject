@@ -20,9 +20,9 @@ ADPWeaponBase::ADPWeaponBase()
 	
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxComponent");
 	SetRootComponent(BoxComponent);
-	//BoxComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	BoxComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BoxComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	BoxComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	BoxComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
@@ -52,28 +52,15 @@ void ADPWeaponBase::OnBoxComponentOverlap(UPrimitiveComponent* OverlappedCompone
 {
 	
 	UE_LOG(LogTemp, Warning, TEXT("%s detected"), *OtherActor->GetName());
-	// if (!IsValidOverlap(OtherActor)) return;
+	if (!IsValidOverlap(OtherActor)) return;
 	
 	
 	
 	if (HasAuthority())
 	{
 		
-		// if (OtherActor->Implements<UAbilitySystemInterface>())
-		// {
-		// 	FGameplayEventData Data;
-		// 	Data.Instigator = this;
-		// 	Data.Target = OtherActor;
-		//
-		// 	if (UDPAbilitySystemLibrary::IsHostile(this, OtherActor))
-		// 	{
-		// 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-		// 			this,
-		// 			FDPGameplayTags::Get().Event_HitReact,
-		// 			Data
-		// 		);
-		// 	}
-		// }
+		if (!OtherActor->Implements<UAbilitySystemInterface>()) return;
+			
 		if (UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()))
 		{
 			if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))

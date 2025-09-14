@@ -7,6 +7,7 @@
 #include "AbilitySystem/DPAbilitySystemLibrary.h"
 #include "AbilitySystem/DPAttributeSet.h"
 #include "Interface/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 
 struct FDPGameplayTags;
@@ -58,15 +59,16 @@ void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParam
 		const FGameplayTag& DebuffType = Pair.Value;
 		const float TypeDamage = Spec.GetSetByCallerMagnitude(DamageType, false, -1.f);
 
-		if (TypeDamage > -.5f) //약간의 오차허용
+		if (TypeDamage > -0.5f) //약간의 오차허용
 		{
 			//디버프 확률
 			const float SourceDebuffChance = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Chance, false, -1.f);
 
-			const bool bDebuff = FMath::RandRange(1,99) < SourceDebuffChance;
-
+			const bool bDebuff = FMath::RandRange(1,100) < SourceDebuffChance;
+			
 			if (bDebuff)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("bDebuff is true"));
 				FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
 
 				UDPAbilitySystemLibrary::SetIsSuccessfulDebuff(ContextHandle, true);
@@ -80,7 +82,10 @@ void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParam
 				UDPAbilitySystemLibrary::SetDebuffDuration(ContextHandle, DebuffDuration);
 				UDPAbilitySystemLibrary::SetDebuffFrequency(ContextHandle, DebuffFrequency);
 			}
-			
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("bDebuff is false, SourceDebuffChance: %f"),SourceDebuffChance);
+			}
 		}
 		
 	}
@@ -144,7 +149,33 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 			continue;
 		}
 		Damage += DamageTypeValue;
+
+		if (UDPAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnDamageDelegate().AddLambda([&](float DamageAmount)
+				{
+					DamageTypeValue = DamageAmount;
+				});
+			}
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar,
+				DamageTypeValue,
+				0.f,
+				UDPAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UDPAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UDPAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatar,
+				nullptr);
+		}
+		
+		Damage += DamageTypeValue;
 	}
+	
 
 	//CriticalChance
 	float SourceCriticalHitChance = 0.f;
